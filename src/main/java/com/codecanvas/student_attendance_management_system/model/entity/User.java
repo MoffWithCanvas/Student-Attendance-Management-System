@@ -6,6 +6,8 @@ import org.hibernate.proxy.HibernateProxy;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static com.codecanvas.student_attendance_management_system.model.entity.Validation.*;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -42,7 +44,7 @@ public class User {
     protected User() {
     }
 
-    public User(String firstName, String lastName, String username, String address, LocalDate dateOfBirth, String email, String passwordHash, Role role) {
+    private User(String firstName, String lastName, String username, String address, LocalDate dateOfBirth, String email, String passwordHash, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -56,37 +58,54 @@ public class User {
     public Long getId() {
         return id;
     }
-
     public String getFirstName() {
         return firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
-
     public String getUsername() {
         return username;
     }
-
     public String getAddress() {
         return address;
     }
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getPasswordHash() {
         return passwordHash;
     }
-
     public Role getRole() {
         return role;
+    }
+
+    //Static factory method to create a new user since I did not include setters
+    public static User create(String firstName, String lastName, String username, String address,
+                                     LocalDate dateOfBirth, String email, String passwordHash, Role role){
+
+        /*
+        requireNonBlank validation method to check if values are blank
+        and return a trimmed value
+         */
+        String cleanFirstName = requireNonBlank(firstName, "First Name");
+        String cleanLastName = requireNonBlank(lastName, "Last name");
+        String cleanUsername = requireNonBlank(username, "Username").toLowerCase();
+        String cleanAddress = requireNonBlank(address, "Address");
+        String cleanEmail = requireNonBlank(email, "Email").toLowerCase();
+        String cleanHash = requireNonBlank(passwordHash, "Password hash");
+
+        if (dateOfBirth == null){
+            throw new IllegalArgumentException("Date cannot be empty");
+        }
+        if (dateOfBirth.isAfter(LocalDate.now())){
+            throw new IllegalArgumentException("Date of birth cannot be in the future");
+        }
+        return new User(cleanFirstName, cleanLastName, cleanUsername, cleanAddress, dateOfBirth,
+                cleanEmail, cleanHash, role);
     }
 
     @Override
