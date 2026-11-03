@@ -21,6 +21,9 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String address;
 
     @Column(nullable = false)
@@ -38,15 +41,18 @@ public class User {
 
     protected User() {
     }
-    public User(String firstName, String lastName, String address, LocalDate dateOfBirth, String email, String passwordHash, Role role) {
+
+    public User(String firstName, String lastName, String username, String address, LocalDate dateOfBirth, String email, String passwordHash, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = username;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
     }
+
     public Long getId() {
         return id;
     }
@@ -57,6 +63,10 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getAddress() {
@@ -101,6 +111,7 @@ public class User {
                 "id = " + id + ", " +
                 "firstName = " + firstName + ", " +
                 "lastName = " + lastName + ", " +
+                "username = " + username + ", " +
                 "address = " + address + ", " +
                 "dateOfBirth = " + dateOfBirth + ", " +
                 "email = " + email + ", " +
