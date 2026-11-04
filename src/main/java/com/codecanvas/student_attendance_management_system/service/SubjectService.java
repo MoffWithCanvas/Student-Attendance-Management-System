@@ -19,16 +19,16 @@ public class SubjectService {
     @Transactional
     public SubjectDetailsResponse addSubject(SubjectDetailsRequest request){
         //Check if subject exist by subject code
-        if (subjectRepository.existsBySubjectCode(request.subjectCode().trim().toUpperCase())){
-            throw new IllegalArgumentException("Subject already exists");
+        String subjectCode = request.subjectCode().trim().toUpperCase();
+        if (subjectRepository.existsBySubjectCode(subjectCode)){
+            throw new IllegalStateException("Subject already exists");
         }
         //add a new subject using a dedicated static factory method in Subject.java
         Subject subject = Subject.createSubject(
-                request.subjectCode(),
+                subjectCode,
                 request.subjectName(),
                 request.credits(),
-                request.subjectType()
-        );
+                request.subjectType());
         return SubjectDetailsResponse.from(subjectRepository.save(subject));
     }
 }
