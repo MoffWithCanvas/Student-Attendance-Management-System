@@ -3,7 +3,10 @@ package com.codecanvas.student_attendance_management_system.model.dto;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
-
+/*
+   Validated UserDetailsRequest DTO that helps to reject bad
+   client input early and returns friendly error messages (HTTP 400)
+ */
 public record UserDetailsRequest(
         @NotBlank(message = "First name cannot be blank")
         String firstName,
