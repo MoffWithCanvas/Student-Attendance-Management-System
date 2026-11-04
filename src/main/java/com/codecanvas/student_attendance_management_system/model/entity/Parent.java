@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.codecanvas.student_attendance_management_system.model.entity.Validation.*;
+
 @Entity
 @Table(name = "parents")
 public class Parent {
@@ -32,7 +34,7 @@ public class Parent {
 
     protected Parent() {
     }
-    public Parent(String firstName, String lastName, String phoneNumber, String email, String physicalAddress) {
+    private Parent(String firstName, String lastName, String phoneNumber, String email, String physicalAddress) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -57,6 +59,21 @@ public class Parent {
     }
     public String getPhysicalAddress() {
         return physicalAddress;
+    }
+
+    //static factory method to create a parent
+    public static Parent createParent(String firstName, String lastName, String phoneNumber,
+                                      String email, String physicalAddress){
+
+        //The method requireNonBlank returns a trimmed value
+        String cleanFirstName = requireNonBlank(firstName, "First name");
+        String cleanLastName = requireNonBlank(lastName, "Last name");
+        String cleanPhoneNumber = requireNonBlank(phoneNumber, "Phone number");
+        String cleanEmail = requireNonBlank(email, "Email");
+        String cleanPhysicalAddress = requireNonBlank(physicalAddress, "Physical address");
+
+        return new Parent(cleanFirstName, cleanLastName, cleanPhoneNumber,
+                cleanEmail, cleanPhysicalAddress);
     }
 
     @Override
