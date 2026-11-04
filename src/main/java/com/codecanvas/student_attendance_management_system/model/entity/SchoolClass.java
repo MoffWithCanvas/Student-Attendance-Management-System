@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.codecanvas.student_attendance_management_system.model.entity.Validation.*;
+
 @Entity
 @Table(name = "school_classes")
 public class SchoolClass {
@@ -23,7 +25,7 @@ public class SchoolClass {
     private String formLevel;
 
     @Column(name = "academic_year", nullable = false, unique = true)
-    private LocalDate academicYear;
+    private String academicYear;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_teacher_id", unique = true)
@@ -33,15 +35,15 @@ public class SchoolClass {
     protected SchoolClass() {
     }
     //MANDATORY BUSINESS CONSTRUCTOR
-    public SchoolClass(String className, String formLevel, LocalDate academicYear) {
+    private SchoolClass(String className, String formLevel, String academicYear) {
         this.className = className;
         this.formLevel = formLevel;
         this.academicYear = academicYear;
     }
 
     // OVERLOADED BUSINESS CONSTRUCTOR (Includes optional teacher)
-    public SchoolClass(String className, String formlevel, LocalDate academicYear, Teacher classTeacher) {
-        this(className, formlevel, academicYear);
+    private SchoolClass(String className, String formLevel, String academicYear, Teacher classTeacher) {
+        this(className, formLevel, academicYear);
         this.classTeacher = classTeacher;
     }
 
@@ -54,14 +56,13 @@ public class SchoolClass {
     public String getFormLevel() {
         return formLevel;
     }
-    public LocalDate getAcademicYear() {
+    public String getAcademicYear() {
         return academicYear;
     }
     public Teacher getClassTeacher() {
         return classTeacher;
     }
 
-    //THE SERVICE CALLS ON THESE TO SAVE A TEACHER
     public void assignClassTeacher(Teacher teacher){
         if (teacher == null){
             throw new IllegalArgumentException("Teacher cannot be null");
@@ -70,6 +71,15 @@ public class SchoolClass {
     }
     public void removeClassTeacher(){
         this.classTeacher = null;
+    }
+
+    //static factory method to handle school class creation
+    public static SchoolClass createSchoolClass(String className, String formLevel, String academicYear){
+        String cleanClassName = requireNonBlank(className, "Class name");
+        String cleanFormLevel = requireNonBlank(formLevel, "Form level").toUpperCase();
+        String cleanAcademicYear = requireNonBlank(academicYear, "Academic year");
+
+        return new SchoolClass(cleanClassName, cleanFormLevel, cleanAcademicYear);
     }
 
     @Override
