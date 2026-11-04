@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
 
+import static com.codecanvas.student_attendance_management_system.model.entity.Validation.*;
+
 @Entity
 @Table(name = "subjects")
 public class Subject {
@@ -12,7 +14,7 @@ public class Subject {
     @Column(name = "subject_id")
     private Long id;
 
-    @Column(name = "subject_code", nullable = false)
+    @Column(name = "subject_code", nullable = false, unique = true)
     private String subjectCode;
 
     @Column(name = "subject_name", nullable = false)
@@ -28,8 +30,7 @@ public class Subject {
     public Subject() {
     }
 
-    public Subject(Long id, String subjectCode, String subjectName, int credits, SubjectType subjectType) {
-        this.id = id;
+    private Subject(String subjectCode, String subjectName, int credits, SubjectType subjectType) {
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
         this.credits = credits;
@@ -50,6 +51,20 @@ public class Subject {
     }
     public SubjectType getSubjectType() {
         return subjectType;
+    }
+
+    //static factory method to handle subject creation
+    public static Subject createSubject(String subjectCode, String subjectName, int credits, SubjectType subjectType){
+        String cleanSubjectCode = requireNonBlank(subjectCode, "Subject code").toUpperCase();
+        String cleanSubjectName = requireNonBlank(subjectName, "Subject name");
+
+        if (subjectType == null){
+            throw new IllegalArgumentException("Subject type required");
+        }
+        if (credits < 1){
+            throw new IllegalArgumentException("Credits must be at least 1");
+        }
+        return new Subject(cleanSubjectCode, cleanSubjectName, credits, subjectType);
     }
 
     @Override
