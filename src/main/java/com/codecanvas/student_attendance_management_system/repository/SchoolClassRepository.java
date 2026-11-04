@@ -4,4 +4,5 @@ import com.codecanvas.student_attendance_management_system.model.entity.SchoolCl
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SchoolClassRepository extends JpaRepository<SchoolClass, Long> {
+    boolean existsByClassNameAndAcademicYear(String ClassName, String academicYear);
 }
