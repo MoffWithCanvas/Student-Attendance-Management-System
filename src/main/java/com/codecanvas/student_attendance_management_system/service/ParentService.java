@@ -4,6 +4,7 @@ import com.codecanvas.student_attendance_management_system.model.dto.ParentDetai
 import com.codecanvas.student_attendance_management_system.model.dto.ParentDetailsResponse;
 import com.codecanvas.student_attendance_management_system.model.entity.Parent;
 import com.codecanvas.student_attendance_management_system.repository.ParentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,7 @@ public class ParentService {
         this.parentRepository = parentRepository;
     }
 
+    @Transactional
     public ParentDetailsResponse addParent(ParentDetailsRequest request){
         //check if a parent exists
         String firstName = request.firstName().trim().toLowerCase();
