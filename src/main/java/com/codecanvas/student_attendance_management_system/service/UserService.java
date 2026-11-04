@@ -1,6 +1,7 @@
 package com.codecanvas.student_attendance_management_system.service;
 
 import com.codecanvas.student_attendance_management_system.model.dto.UserDetailsRequest;
+import com.codecanvas.student_attendance_management_system.model.dto.UserDetailsResponse;
 import com.codecanvas.student_attendance_management_system.model.entity.Role;
 import com.codecanvas.student_attendance_management_system.model.entity.User;
 import com.codecanvas.student_attendance_management_system.repository.UserRepository;
@@ -19,7 +20,7 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(UserDetailsRequest request, Role role){
+    public UserDetailsResponse createUser(UserDetailsRequest request, Role role){
         //Check if email and username already exists
         if (userRepository.existsByEmail(request.email().trim().toLowerCase())){
             throw new IllegalStateException("Email already exists");
@@ -27,7 +28,7 @@ public class UserService {
         if (userRepository.existsByUsername(request.username().trim().toLowerCase())){
             throw new IllegalStateException("Username already exists");
         }
-        //Creating a user using the static factory method
+        //Creating a user using the static factory method in User.java
         User user = User.create(
                 request.firstName(),
                 request.lastName(),
@@ -38,6 +39,6 @@ public class UserService {
                 passwordEncoder.encode(request.password()),
                 role
         );
-        return userRepository.save(user);
+        return UserDetailsResponse.from(userRepository.save(user));
     }
 }
