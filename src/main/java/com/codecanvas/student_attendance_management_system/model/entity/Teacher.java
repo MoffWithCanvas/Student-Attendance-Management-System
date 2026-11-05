@@ -1,5 +1,6 @@
 package com.codecanvas.student_attendance_management_system.model.entity;
 
+import com.codecanvas.student_attendance_management_system.model.dto.UserDetailsResponse;
 import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class Teacher {
     private String department;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
     // MANDATORY DEFAULT CONSTRUCTOR (JPA requirement)
@@ -35,7 +36,7 @@ public class Teacher {
     OPTIONAL OVERLOADED CONSTRUCTOR
     A teacher always needs a subject upon creation
      */
-    public Teacher(User user, String department, Subject subject) {
+    private Teacher(User user, String department, Subject subject) {
         this(user, department);
         this.subject = subject;
     }
@@ -51,6 +52,23 @@ public class Teacher {
     }
     public Subject getSubject() {
         return subject;
+    }
+
+    //static factory method to create a teacher
+    public static Teacher createTeacher(User user, String department, Subject subject){
+        String cleanDepartment = Validation.requireNonBlank(department, "Department");
+        if (user == null){
+            throw new IllegalArgumentException("User details required");
+        }
+        // this role check guarantees that STUDENT or ADMIN cannot have a TEACHER profile
+        if (user.getRole() != Role.TEACHER){
+            throw new IllegalArgumentException("User must have TEACHER role");
+        }
+        if (subject == null){
+            throw new IllegalArgumentException("Subject required");
+        }
+
+        return new Teacher(user, cleanDepartment, subject);
     }
 
     //EQUALS AND HASHCODE IMPLEMENTATION
