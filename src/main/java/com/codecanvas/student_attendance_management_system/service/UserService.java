@@ -20,7 +20,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDetailsResponse createUser(UserDetailsRequest request, Role role){
+    public User createUser(UserDetailsRequest request, Role role){
         //Check if email and username already exists
         if (userRepository.existsByEmail(request.email().trim().toLowerCase())){
             throw new IllegalStateException("Email already exists");
@@ -39,6 +39,6 @@ public class UserService {
                 passwordEncoder.encode(request.password()),
                 role
         );
-        return UserDetailsResponse.from(userRepository.save(user));
+        return userRepository.save(user);
     }
 }
